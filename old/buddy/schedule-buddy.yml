@@ -1,0 +1,77 @@
+ffff
+#version: 2.0
+
+pipelines:
+  - pipeline: "Scheduled Docker Job - Sunday 00:00"
+    trigger_mode: "SCHEDULED"
+    cron: "0 0 * * 0"  # Runs every Sunday at 00:00 UTC
+    trigger_condition: "ALWAYS"
+    actions:
+      - action: "Checkout Code"
+        type: "GIT_CLONE"
+        working_directory: "/buddy/your-repo-directory"
+
+      - action: "Build Docker Image"
+        type: "BUILD"
+        docker_image_name: "library/docker"
+        docker_image_tag: "latest"
+        execute_commands:
+          - "docker build -t fh-automation-image ."
+        mount_filesystem_path: "/buddy/your-repo-directory"
+
+      - action: "Run Docker Container"
+        type: "BUILD"
+        docker_image_name: "library/docker"
+        docker_image_tag: "latest"
+        execute_commands:
+          - "docker run --env-file variables.env fh-automation-image"
+        mount_filesystem_path: "/buddy/your-repo-directory"
+
+  - pipeline: "Scheduled Docker Job - Sunday 06:00"
+    trigger_mode: "SCHEDULED"
+    cron: "0 6 * * 0"  # Runs every Sunday at 06:00 UTC
+    trigger_condition: "ALWAYS"
+    actions:
+      - action: "Checkout Code"
+        type: "GIT_CLONE"
+        working_directory: "/buddy/your-repo-directory"
+
+      - action: "Build Docker Image"
+        type: "BUILD"
+        docker_image_name: "library/docker"
+        docker_image_tag: "latest"
+        execute_commands:
+          - "docker build -t fh-automation-image ."
+        mount_filesystem_path: "/buddy/your-repo-directory"
+
+      - action: "Run Docker Container"
+        type: "BUILD"
+        docker_image_name: "library/docker"
+        docker_image_tag: "latest"
+        execute_commands:
+          - "docker run --env-file variables.env fh-automation-image"
+        mount_filesystem_path: "/buddy/your-repo-directory"
+
+  - pipeline: "Manual Docker Job"
+    trigger_mode: "MANUAL"
+    trigger_condition: "ALWAYS"
+    actions:
+      - action: "Checkout Code"
+        type: "GIT_CLONE"
+        working_directory: "/buddy/your-repo-directory"
+
+      - action: "Build Docker Image"
+        type: "BUILD"
+        docker_image_name: "library/docker"
+        docker_image_tag: "latest"
+        execute_commands:
+          - "docker build -t fh-automation-image ."
+        mount_filesystem_path: "/buddy/your-repo-directory"
+
+      - action: "Run Docker Container"
+        type: "BUILD"
+        docker_image_name: "library/docker"
+        docker_image_tag: "latest"
+        execute_commands:
+          - "docker run --env-file variables.env fh-automation-image"
+        mount_filesystem_path: "/buddy/your-repo-directory"

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Class Scheduler</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Gym Class Scheduler</h1>
+    <form method="POST">
+        <label for="day">Day:</label>
+        <input type="text" id="day" name="day" required>
+
+        <label for="time">Time:</label>
+        <input type="time" id="time" name="time" required>
+
+        <label for="class_name">Class Name:</label>
+        <input type="text" id="class_name" name="class_name" required>
+
+        <button type="submit" name="action" value="add">Add Class</button>
+        <button type="submit" name="action" value="delete">Delete Class</button>
+    </form>
+
+    <h2>Scheduled Classes</h2>
+    <ul>
+        {% for day, times in classes_dict.items() %}
+            <li>{{ day }}:</li>
+            <ul>
+                {% for time, class_name in times.items() %}
+                    <li>{{ time }} - {{ class_name }}</li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,0 +1,67 @@
+trigger: none  # No trigger on code changes
+
+schedules:
+  - cron: "0 0 * * 0"    # Runs 37 hours less (UTC time) to schedule Monday : 13:00 - Body Pump
+    displayName: "Schedule Body Pump Monday Morning"
+    branches:
+      include:
+        - main
+  - cron: "0 6 * * 0"    # Runs 37 hours less (UTC time) to schedule Monday : 19:00 - Body Attack
+    displayName: "Schedule Body Attack Monday Evening"
+    branches:
+      include:
+        - main
+  - cron: "15 0 * * 1"    # Runs 37 hours less (UTC time) to schedule Tuesday : 13:15 - Body Attack
+    displayName: "Schedule Body Attack Tuesday Afternoon"
+    branches:
+      include:
+        - main
+  - cron: "30 5 * * 2"    # Runs 37 hours less (UTC time) to schedule Wednesday : 18:30 - Body Pump
+    displayName: "Schedule Body Pump Wednesday Evening"
+    branches:
+      include:
+        - main
+  - cron: "13 16 * * 3"
+    displayName: "Additional Schedule 1"
+    branches:
+      include:
+        - main
+  - cron: "48 15 * * 3"
+    displayName: "Additional Schedule 2"
+    branches:
+      include:
+        - main
+  - cron: "15 0 * * 3"    # Runs 37 hours less (UTC time) to schedule Thursday : 13:15 - Body Pump
+    displayName: "Schedule Body Pump Thursday Afternoon"
+    branches:
+      include:
+        - main
+  - cron: "15 5 * * 4"    # Runs 37 hours less (UTC time) to schedule Friday : 18:15 - Body Pump
+    displayName: "Schedule Body Pump Friday Evening"
+    branches:
+      include:
+        - main
+  - cron: "0 6 * * 4"    # Runs 37 hours less (UTC time) to schedule Friday : 19:00 - Body Attack
+    displayName: "Schedule Body Attack Friday Evening"
+    branches:
+      include:
+        - main
+
+jobs:
+  - job: run_docker
+    displayName: "Run Docker Container Job"
+    pool:
+      vmImage: 'ubuntu-latest'
+
+    steps:
+      - checkout: self
+
+      - task: DockerInstaller@0
+        displayName: "Install Docker"
+
+      - script: |
+          docker build -t fh-automation-image .
+        displayName: "Build Docker Image"
+      - script: |
+          docker run --env-file variables.env fh-automation-image
+        displayName: "Run Docker Container"

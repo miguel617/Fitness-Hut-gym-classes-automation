@@ -1,0 +1,103 @@
+fggfgf 
+#version: 2.1
+
+jobs:
+  run-docker:
+    docker:
+      - image: circleci/python:3.8
+    steps:
+      - checkout
+
+      - setup_remote_docker:
+          version: 20.10.7
+          docker_layer_caching: true
+
+      - run:
+          name: Set up Docker Buildx
+          command: |
+            docker buildx create --name mybuilder
+            docker buildx use mybuilder
+
+      - run:
+          name: Build Docker image
+          command: docker build -t fh-automation-image .
+
+      - run:
+          name: Run Docker container
+          command: docker run --env-file variables.env fh-automation-image
+
+  approval:
+    docker:
+      - image: circleci/python:3.8
+    steps:
+      - run:
+          name: Wait for manual approval
+          command: echo "Manual approval required."
+
+workflows:
+  version: 2
+
+  scheduled_and_manual:
+    jobs:
+      - approval
+      - run-docker:
+          requires:
+            - approval
+
+    triggers:
+      # Schedule triggers
+      - schedule:
+          cron: "0 0 * * 0"   # Runs at 00:00 UTC on Sundays
+          filters:
+            branches:
+              only:
+                - main
+      - schedule:
+          cron: "0 6 * * 0"   # Runs at 06:00 UTC on Sundays
+          filters:
+            branches:
+              only:
+                - main
+      - schedule:
+          cron: "15 0 * * 1"  # Runs at 00:15 UTC on Mondays
+          filters:
+            branches:
+              only:
+                - main
+      - schedule:
+          cron: "30 5 * * 2"  # Runs at 05:30 UTC on Tuesdays
+          filters:
+            branches:
+              only:
+                - main
+      - schedule:
+          cron: "13 16 * * 3" # Runs at 16:13 UTC on Wednesdays
+          filters:
+            branches:
+              only:
+                - main
+      - schedule:
+          cron: "48 15 * * 3" # Runs at 15:48 UTC on Wednesdays
+          filters:
+            branches:
+              only:
+                - main
+      - schedule:
+          cron: "15 0 * * 3"  # Runs at 00:15 UTC on Thursdays
+          filters:
+            branches:
+              only:
+                - main
+      - schedule:
+          cron: "15 5 * * 4"  # Runs at 05:15 UTC on Fridays
+          filters:
+            branches:
+              only:
+                - main
+      - schedule:
+          cron: "0 6 * * 4"   # Runs at 06:00 UTC on Fridays
+          filters:
+            branches:
+              only:
+                - main
+

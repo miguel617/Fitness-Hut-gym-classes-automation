@@ -1,0 +1,39 @@
+name: Scheduled Docker Job
+
+on:
+  # Allow the workflow to be manually triggered
+  workflow_dispatch:
+
+  # Schedule runs at specific times
+  schedule:
+    - cron: "0 0 * * 0"    # Runs 37 hours less (UTC time) to schedule Monday : 13:00 - Body Pump
+    - cron: "15 5 * * 0"   # Runs 37 hours less (UTC time) to schedule Monday : 18:15 - Body Attack
+    - cron: "15 0 * * 1"   # Runs 37 hours less (UTC time) to schedule Tuesday : 13:15 - Body Attack
+    - cron: "30 5 * * 2"   # Runs 37 hours less (UTC time) to schedule Wednesday : 18:30 - Body Pump
+    - cron: "15 0 * * 3"   # Runs 37 hours less (UTC time) to schedule Thursday : 13:15 - Body Pump
+    - cron: "0 5 * * 4"    # Runs 37 hours less (UTC time) to schedule Friday : 18:00 - Body Pump
+    - cron: "0 6 * * 4"    # Runs 37 hours less (UTC time) to schedule Friday : 19:00 - Body Attack
+
+jobs:
+  run-docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: |
+          docker build -t fh-automation-image .
+
+      - name: Run Docker container
+        run: |
+          docker run \
+            -e SMTP_USER=${{ secrets.SMTP_USER }} \
+            -e SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }} \
+            -e FH_USERNAME=${{ secrets.FH_USERNAME }} \
+            -e FH_PWD=${{ secrets.FH_PWD }} \
+            fh-automation-image
