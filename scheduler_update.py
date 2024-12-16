@@ -66,11 +66,11 @@ def main():
         cron_day_of_week = (target_datetime_utc.weekday() + 1) % 7  # 1=Monday, 0=Sunday - cron expression is different from the python function weekday()
         
         # Return the cron expression
-        return f'- cron: "{cron_minute} {cron_hour} {cron_day_of_month} {cron_month} {cron_day_of_week}"    # Runs 49 hours less (UTC time) to schedule {target_day} : {target_time_str} - {target_class}'
+        return f'- cron: "{cron_minute} {cron_hour} {cron_day_of_month} {cron_month} {cron_day_of_week}"    # Runs 48 hours less (UTC time) to schedule {target_day} : {target_time_str} - {target_class}'
 
     cron_expressions = []
 
-    offset_hours = 49  # Offset in hours
+    offset_hours = 48  # Offset in hours
     timezone_str = 'Portugal'  # Local timezone
 
     # get all iterations and apply the function
