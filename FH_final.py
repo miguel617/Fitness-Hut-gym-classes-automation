@@ -35,6 +35,7 @@ config.read('config.ini')
 #chromedriver = config['Optional Config Parameters']['chromedriver']
 gui_display = eval(config['Optional Config Parameters']['gui_display']) # to show or not the GUI - True is only useful when testing and to deploy outside my PC, it had to be False
 website = config['Optional Config Parameters']['website']
+delay_hours = int(config['Optional Config Parameters']['delay_hours']) # 48 hours now but it might differ
 
 user = os.getenv('FH_USERNAME')  # access the env variable
 pwd = os.getenv('FH_PWD')  # access the env variable
@@ -47,8 +48,8 @@ driver, wait = initial_exec(user, pwd, website, gui_display)
 classes_dict = eval(config['Classes to Schedule by Day']['classes_dict'])
 
 
-# now we want to know today's date so that we can book tomorrow's class - 36 + 1 hours ahead 
-# This because here in config.ini we define Lisbon Time which is UTC + 1, vs UTC scheduler in the app where we will deploy
+# now we want to know today's date so that we can book tomorrow's class - 48 hours ahead 
+# This because here in config.ini we define Lisbon Time which is UTC, vs UTC scheduler in the app where we will deploy
 
 #current_time = datetime(2024, 9, 2, 2, 44, 46, 553971)
 current_time = datetime.now()
@@ -57,8 +58,8 @@ print(current_time)
 today = current_time.strftime("%Y-%m-%d")
 day_of_week_today = current_time.strftime('%A')
 
-tomorrow = (current_time + timedelta(hours=37)).strftime("%Y-%m-%d")
-day_of_week_tomorrow = (current_time + timedelta(hours=37)).strftime('%A')
+tomorrow = (current_time + timedelta(hours=delay_hours)).strftime("%Y-%m-%d")
+day_of_week_tomorrow = (current_time + timedelta(hours=delay_hours)).strftime('%A')
 
 #tomorrow = '2024-08-16'
 #day_of_week_tomorrow = 'Friday'
@@ -70,15 +71,15 @@ day_select = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-cy="
 day_select.click()
 
 ############################################### [IMPORTANT] ####################################################
-#### We will find how many classes there are to book within the 37 hour timeframe (only in one day) because github actions, often gets the job delayed so, probably, the booking will occur less than 36 before
+#### We will find how many classes there are to book within the 48 hour timeframe (only in one day) because github actions, often gets the job delayed so, probably, the booking will occur less than 48 before
 
-# to run only this script once per schedule, so in fact, the list will be only 1 schedule - 36 + 1 hours after
-def find_classes_in_next_37_hours(classes_dict):
+# to run only this script once per schedule, so in fact, the list will be only 1 schedule - 48 hours after
+def find_classes_in_next_delay_hours(classes_dict, delay_hours):
     # Get the current datetime
     now = datetime.now()
     
-    # Calculate the datetime 37 hours from now
-    time_37_hours_later = now + timedelta(hours=37)
+    # Calculate the datetime 48 hours from now
+    time_delay_hours_later = now + timedelta(delay_hours)
     
     # Days of the week to map string to weekday index
     days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -99,8 +100,8 @@ def find_classes_in_next_37_hours(classes_dict):
                 day=(now + timedelta(days=1)).day
             )
 
-            # Check if the class is within the next 37 hours
-            if now <= time_of_class <= time_37_hours_later:
+            # Check if the class is within the next 48 hours
+            if now <= time_of_class <= time_delay_hours_later:
                 print('ola', time_of_class, class_name)
                 upcoming_classes.append((time_of_class, class_name))
     
@@ -142,8 +143,8 @@ def schedule_slots(driver, wait, class_of_day, max_retries=5, retry_delay=2):
     
     print("Failed to book the class after maximum retries.")
 
-# see the upcoming classes in this 36 hours timeframe (only including the classes for the day we want to schedule)
-upcoming_classes = find_classes_in_next_37_hours(classes_dict)
+# see the upcoming classes in this 48 hours timeframe (only including the classes for the day we want to schedule)
+upcoming_classes = find_classes_in_next_delay_hours(classes_dict, delay_hours)
 
 # Extract the hours and minutes as strings
 classes_of_day = [dt.strftime('%H:%M') for dt, class_name in upcoming_classes]

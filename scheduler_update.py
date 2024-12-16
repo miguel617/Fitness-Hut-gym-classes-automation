@@ -22,6 +22,7 @@ def main():
     config.read('config.ini')
 
     classes_dict = eval(config['Classes to Schedule by Day']['classes_dict'])
+    delay_hours = int(config['Optional Config Parameters']['delay_hours'])
 
     def calculate_cron_expression(target_time_str, target_day, target_class, offset_hours, timezone_str):
         # Define weekdays mapping
@@ -66,11 +67,11 @@ def main():
         cron_day_of_week = (target_datetime_utc.weekday() + 1) % 7  # 1=Monday, 0=Sunday - cron expression is different from the python function weekday()
         
         # Return the cron expression
-        return f'- cron: "{cron_minute} {cron_hour} {cron_day_of_month} {cron_month} {cron_day_of_week}"    # Runs 48 hours less (UTC time) to schedule {target_day} : {target_time_str} - {target_class}'
+        return f'- cron: "{cron_minute} {cron_hour} {cron_day_of_month} {cron_month} {cron_day_of_week}"    # Runs {delay_hours} hours less (UTC time) to schedule {target_day} : {target_time_str} - {target_class}'
 
     cron_expressions = []
 
-    offset_hours = 48  # Offset in hours
+    offset_hours = delay_hours  # Offset in hours
     timezone_str = 'Portugal'  # Local timezone
 
     # get all iterations and apply the function
