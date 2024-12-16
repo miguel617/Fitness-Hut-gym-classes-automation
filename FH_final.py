@@ -79,13 +79,14 @@ def find_classes_in_next_delay_hours(classes_dict, delay_hours):
     now = datetime.now()
     
     # Calculate the datetime 48 hours from now
-    time_delay_hours_later = now + timedelta(delay_hours)
+    time_delay_hours_later = now + timedelta(hours=delay_hours)
     
     # Days of the week to map string to weekday index
     days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     
     # Determine tomorrow's day name
-    tomorrow = days_of_week[(now.weekday() + 1) % 7]
+    days_lag = delay_hours//24
+    tomorrow = days_of_week[(now.weekday() + days_lag) % 7]
     
     # List to store results
     upcoming_classes = []
@@ -97,7 +98,7 @@ def find_classes_in_next_delay_hours(classes_dict, delay_hours):
             time_of_class = datetime.strptime(f"{time_str}", "%H:%M").replace(
                 year=now.year,
                 month=now.month,
-                day=(now + timedelta(days=1)).day
+                day=(now + timedelta(days=days_lag)).day
             )
 
             # Check if the class is within the next 48 hours
