@@ -22,6 +22,8 @@ def main():
     config.read('config.ini')
 
     classes_dict = eval(config['Classes to Schedule by Day']['classes_dict'])
+    classes_dict = {key: value for key, value in classes_dict.items() if value} # remove empty days
+
     delay_hours = int(config['Optional Config Parameters']['delay_hours'])
 
     def calculate_cron_expression(target_time_str, target_day, target_class, offset_hours, timezone_str):
