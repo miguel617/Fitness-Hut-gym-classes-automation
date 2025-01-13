@@ -22,6 +22,7 @@ def main():
     # define important parameters - on the config.ini file and parse it
     config = configparser.ConfigParser()
     config.read('config.ini')
+    print(config)
 
     classes_dict = eval(config['Classes to Schedule by Day']['classes_dict'])
     classes_dict = {key: value for key, value in classes_dict.items() if value} # remove empty days
