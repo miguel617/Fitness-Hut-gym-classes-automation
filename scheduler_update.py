@@ -17,6 +17,8 @@ import git
 from main_init import initial_exec, clone_repo, commit_push
 
 def main():
+
+    time_py.sleep(2)    
     # define important parameters - on the config.ini file and parse it
     config = configparser.ConfigParser()
     config.read('config.ini')
