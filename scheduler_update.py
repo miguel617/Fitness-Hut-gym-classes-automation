@@ -18,11 +18,11 @@ from main_init import initial_exec, clone_repo, commit_push
 
 def main():
 
-    time_py.sleep(2)    
+    time_py.sleep(1)    
     # define important parameters - on the config.ini file and parse it
     config = configparser.ConfigParser()
     config.read('config.ini')
-    print(config)
+    print('ola            ', config)
 
     classes_dict = eval(config['Classes to Schedule by Day']['classes_dict'])
     classes_dict = {key: value for key, value in classes_dict.items() if value} # remove empty days
