@@ -95,9 +95,7 @@ def main():
         # Push the changes back to GitHub
         subprocess.run(['git', 'push'], cwd=repo_dir)
 
-    github_token = os.getenv('GH_TOKEN')
-    print(github_token)
-    print("github token =", github_token)
+    github_token = config['GitHub Config']['gh_token']
     repo_url = config['GitHub Config']['github_repo']
 
     # Use PAT for authentication
