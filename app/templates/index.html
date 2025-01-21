@@ -24,6 +24,9 @@
                 'Sunday': {}
             });
 
+            const [unsavedChanges, setUnsavedChanges] = React.useState(false); // Track unsaved changes
+            const daysOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
             // Load data from server when component mounts
             React.useEffect(() => {
                 fetch('/api/schedule')
@@ -49,20 +52,22 @@
                     if (!response.ok) {
                         throw new Error('Failed to save changes');
                     }
+                    setUnsavedChanges(false); // Reset unsaved changes flag
+                    alert('Changes saved successfully!');
                 } catch (error) {
                     console.error('Error saving to server:', error);
                     alert('Failed to save changes to server');
                 }
             };
 
-            const handleDelete = async (day, time) => {
+            const handleDelete = (day, time) => {
                 const newSchedule = { ...schedule };
                 delete newSchedule[day][time];
                 setSchedule(newSchedule);
-                await saveToServer(newSchedule);
+                setUnsavedChanges(true); // Mark changes as unsaved
             };
 
-            const handleAdd = async (day) => {
+            const handleAdd = (day) => {
                 const time = prompt('Enter time (HH:MM):', '');
                 const className = prompt('Enter class name:', '');
                 
@@ -75,11 +80,11 @@
                         }
                     };
                     setSchedule(newSchedule);
-                    await saveToServer(newSchedule);
+                    setUnsavedChanges(true); // Mark changes as unsaved
                 }
             };
 
-            const handleEdit = async (day, time, currentClass) => {
+            const handleEdit = (day, time, currentClass) => {
                 const newClass = prompt('Enter new class name:', currentClass);
                 
                 if (newClass && newClass !== currentClass) {
@@ -91,18 +96,38 @@
                         }
                     };
                     setSchedule(newSchedule);
-                    await saveToServer(newSchedule);
+                    setUnsavedChanges(true); // Mark changes as unsaved
+                }
+            };
+
+            const handleSave = () => {
+                if (unsavedChanges) {
+                    const confirmSave = window.confirm('Are you sure you want to save these changes?');
+                    if (confirmSave) {
+                        saveToServer(schedule);
+                    }
+                } else {
+                    alert('No changes to save.');
                 }
             };
 
             return (
                 <div className="p-4">
                     <div className="max-w-2xl mx-auto bg-white shadow rounded-lg">
-                        <div className="p-4 border-b">
+                        <div className="p-4 border-b flex justify-between items-center">
                             <h1 className="text-xl font-bold">Class Schedule</h1>
+                            <button
+                                onClick={handleSave}
+                                disabled={!unsavedChanges}
+                                className={`px-4 py-2 text-sm font-medium text-white rounded ${
+                                    unsavedChanges ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-400 cursor-not-allowed'
+                                }`}
+                            >
+                                Save Changes
+                            </button>
                         </div>
                         <div className="p-4 space-y-6">
-                            {Object.entries(schedule).map(([day, classes]) => (
+                            {daysOrder.map(day => (
                                 <div key={day} className="space-y-2">
                                     <div className="flex justify-between items-center">
                                         <h3 className="text-lg font-semibold">{day}</h3>
@@ -113,8 +138,8 @@
                                             Add Class
                                         </button>
                                     </div>
-                                    {Object.entries(classes).length > 0 ? (
-                                        Object.entries(classes).map(([time, className]) => (
+                                    {Object.entries(schedule[day]).length > 0 ? (
+                                        Object.entries(schedule[day]).map(([time, className]) => (
                                             <div key={time} className="flex items-center gap-4 p-2 bg-gray-50 rounded">
                                                 <span className="w-20 font-medium">{time}</span>
                                                 <span className="flex-1">{className}</span>
