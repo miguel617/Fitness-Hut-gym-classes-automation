@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import os
+from dotenv import load_dotenv
 import subprocess
 import configparser
 from datetime import datetime, timedelta
@@ -81,21 +82,34 @@ def main():
     ############### GitHub cloning and push commits ####################
 
     def clone_repo(repo_url, clone_dir):
-        if not os.path.exists(clone_dir):
-            print(f"Cloning repository into: {clone_dir}")
-            subprocess.run(['git', 'clone', repo_url, clone_dir])
-        else:
-            print(f"Repository already exists at: {clone_dir}")
+        # Remove the existing repository directory if it exists
+        if os.path.exists(clone_dir):
+            print(f"Removing existing repository at: {clone_dir}")
+            subprocess.run(['rm', '-rf', clone_dir])
 
-    def commit_push(commit_message, repo_dir):
+        # Clone the repository
+        print(f"Cloning repository into: {clone_dir}")
+        subprocess.run(['git', 'clone', repo_url, clone_dir])
+
+    def commit_push(commit_message, repo_dir, github_token):
+
+        # Configure Git user name and email
+        subprocess.run(['git', 'config', 'user.email', 'miguelralmeidapereira@gmail.com'], cwd=repo_dir)
+        subprocess.run(['git', 'config', 'user.name', 'miguel617'], cwd=repo_dir)
+
         # Add and commit the changes
         subprocess.run(['git', 'add', '.'], cwd=repo_dir)
         subprocess.run(['git', 'commit', '-m', commit_message], cwd=repo_dir)
 
+        subprocess.run(['git', 'remote', 'set-url', 'origin', f'https://{github_token}@github.com/miguel617/Fitness-Hut-gym-classes-automation'], cwd=repo_dir)
+
         # Push the changes back to GitHub
         subprocess.run(['git', 'push'], cwd=repo_dir)
 
-    github_token = config['GitHub Config']['gh_token']
+    project_folder = os.path.expanduser('~/mysite')  # adjust as appropriate
+    load_dotenv(os.path.join(project_folder, '.env'))
+
+    github_token = os.getenv("GH_TOKEN")
     repo_url = config['GitHub Config']['github_repo']
 
     # Use PAT for authentication
@@ -168,7 +182,7 @@ def main():
     subprocess.run(['cp', config_ini_src, config_ini_dst])
 
     # Commit and push changes
-    commit_push(commit_message, repo_dir=clone_dir)
+    commit_push(commit_message=commit_message, repo_dir=clone_dir, github_token=github_token)
 
 if __name__ == "__main__":
     main()

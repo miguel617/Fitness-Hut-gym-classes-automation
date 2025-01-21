@@ -13,7 +13,8 @@ on:
     - cron: "15 13 * * 2"    # Runs 48 hours less (UTC time) to schedule Thursday : 13:15 - Body Pump
     - cron: "15 18 * * 3"    # Runs 48 hours less (UTC time) to schedule Friday : 18:15 - Body Pump
     - cron: "15 19 * * 3"    # Runs 48 hours less (UTC time) to schedule Friday : 19:15 - Body Attack
-    - cron: "0 12 * * 4"    # Runs 48 hours less (UTC time) to schedule Saturday : 12:00 - ewggge
+    - cron: "15 12 * * 5"    # Runs 48 hours less (UTC time) to schedule Sunday : 12:15 - vfrfggfgf
+    - cron: "30 11 * * 5"    # Runs 48 hours less (UTC time) to schedule Sunday : 11:30 - vfrgg
 
 jobs:
   run-docker:
