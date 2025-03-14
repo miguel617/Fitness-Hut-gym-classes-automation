@@ -109,55 +109,65 @@ def find_classes_in_next_delay_hours(classes_dict, delay_hours):
     return upcoming_classes
     
 
-def schedule_slots(driver, wait, class_of_day, max_retries=5, retry_delay=2):
+def schedule_slots(driver, wait, class_time, class_name, max_retries=5, retry_delay=2):
+    """
+    Attempts to book a class based on a given time and class name.
+    """
     
     for attempt in range(max_retries):
         try:
-            # Locate all schedules
-            elements = wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, '[data-cy="start-time"]')))
+            # Locate all class time elements
+            time_elements = wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, '[data-cy="start-time"]')))
+
+            for time_element in time_elements:
+                extracted_time = time_element.text.strip()  # Extract class time
+
+                if extracted_time == class_time:  # Match time from dictionary
+                    # Find the class name element
+                    booking_name_element = time_element.find_element(By.XPATH, '../../..//*[@data-cy="booking-name"]')
+                    extracted_class_name = booking_name_element.text.strip()
+
+                    # Validate both class time AND class name
+                    if extracted_class_name == class_name:  # ✅ Now checking correctly
+                        # Click the time element to select the class
+                        time_element.click()
+
+                        # Click the book button
+                        class_book = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-cy="book-button"]')))
+                        class_book.click()
+
+                        # Click the confirm button
+                        confirm_book = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-cy="book-class-confirm-button"]')))
+                        confirm_book.click()
+
+                        print(f"✅ Class '{class_name}' at {class_time} booked successfully.")
+                        return f"{class_name} at {class_time}"  # Exit after successful booking
             
-            # Attempt to find and click the desired class slot
-            for element in elements:
-                if element.text == class_of_day:
-                    # Click the element
-                    #driver.execute_script("arguments[0].click();", element)
-                    element.click()
-                    
-                    # Book the class by clicking the appropriate buttons
-                    class_book = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-cy="book-button"]')))
-                    class_book.click()
-                    
-                    confirm_book = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-cy="book-class-confirm-button"]')))
-                    confirm_book.click()
-                    
-                    print("Class {} booked successfully.".format(class_of_day))
-                    return class_of_day # Exit the function after successful booking
-            
-            # If the loop completes without finding the class, refresh and retry
-            print("Class not found, refreshing the page.")
+            # If no matching class was found, refresh and retry
+            print(f"🔄 Matching class not found for {class_time} ({class_name}), refreshing the page (attempt {attempt+1}/{max_retries}).")
             driver.refresh()
             time.sleep(retry_delay)
         
         except (WebDriverException, StaleElementReferenceException) as e:
-            print(f"Attempt {attempt + 1} failed: {e}")
+            print(f"⚠️ Attempt {attempt + 1} failed: {e}")
             time.sleep(retry_delay)  # Wait before retrying
     
-    print("Failed to book the class after maximum retries.")
-
+    print(f"❌ Failed to book class '{class_name}' at {class_time} after maximum retries.")
+    return None  # Return None if booking was unsuccessful
+    
 # see the upcoming classes in this 48 hours timeframe (only including the classes for the day we want to schedule)
 upcoming_classes = find_classes_in_next_delay_hours(classes_dict, delay_hours)
 
-# Extract the hours and minutes as strings
-classes_of_day = [dt.strftime('%H:%M') for dt, class_name in upcoming_classes]
+# Extract the hours and minutes as strings and convert the list of tuples into a dictionary of all to shedule
+classes_of_day_dict = {dt.strftime("%H:%M"): name for dt, name in upcoming_classes}
 
 # run all and see which ones were successfully reserved ("successful_classes" variable)
 
 successful_classes = []
-for class_of_day in classes_of_day:
+for class_time, class_name in classes_of_day_dict.items():
     print(class_of_day)
-    successful_class = schedule_slots(driver, wait, class_of_day)
+    successful_class = schedule_slots(driver, wait, class_time, class_name)
     successful_classes.append(successful_class)
-
 
 
 # See the corresponding class names of each succeful time slot
