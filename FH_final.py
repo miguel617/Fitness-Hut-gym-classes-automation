@@ -165,7 +165,6 @@ classes_of_day_dict = {dt.strftime("%H:%M"): name for dt, name in upcoming_class
 
 successful_classes = []
 for class_time, class_name in classes_of_day_dict.items():
-    print(class_of_day)
     successful_class = schedule_slots(driver, wait, class_time, class_name)
     successful_classes.append(successful_class)
 
