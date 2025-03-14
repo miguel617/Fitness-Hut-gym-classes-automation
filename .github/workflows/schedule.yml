@@ -16,7 +16,7 @@ on:
     - cron: "15 18 * * 3"    # Runs 48 hours less (UTC time) to schedule Friday : 18:15 - Body Pump
     - cron: "15 19 * * 3"    # Runs 48 hours less (UTC time) to schedule Friday : 19:15 - Body Attack
     - cron: "0 10 * * 4"    # Runs 48 hours less (UTC time) to schedule Saturday : 10:00 - Body Pump
-    - cron: "0 10 * * 5"    # Runs 48 hours less (UTC time) to schedule Sunday : 10:00 - Body Pump
+    - cron: "0 10 * * 5"    # Runs 48 hours less (UTC time) to schedule Sunday : 10:00 - Virtual Cycling
 
 jobs:
   run-docker:
