@@ -51,9 +51,12 @@ def initial_exec(user, pwd, website, gui_option=False):
     wait = WebDriverWait(driver, 10)
 
     # accept cookies
-    cookie_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "cky-btn-accept")))
-    cookie_button.click()
-    print("Cookies accepted")
+    try:
+        cookie_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "cky-btn-accept")))
+        cookie_button.click()
+        print("Cookies accepted")
+    except Exception as e:
+        print("No cookie banner found or already accepted")
 
     # input email
     insert_text('email', user, wait)
