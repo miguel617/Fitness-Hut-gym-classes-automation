@@ -6,15 +6,13 @@ on:
 
   # Schedule runs at specific times
   schedule:
-    - cron: "15 18 * * 6"    # Runs 48 hours less (UTC time) to schedule Monday : 18:15 - Body Attack
-    - cron: "0 13 * * 6"    # Runs 48 hours less (UTC time) to schedule Monday : 13:00 - Body Pump
-    - cron: "30 17 * * 0"    # Runs 48 hours less (UTC time) to schedule Tuesday : 17:30 - Body Pump
-    - cron: "30 18 * * 1"    # Runs 48 hours less (UTC time) to schedule Wednesday : 18:30 - Body Pump
-    - cron: "0 13 * * 2"    # Runs 48 hours less (UTC time) to schedule Thursday : 13:00 - Body Pump
-    - cron: "15 18 * * 2"    # Runs 48 hours less (UTC time) to schedule Thursday : 18:15 - Body Pump
-    - cron: "15 19 * * 3"    # Runs 48 hours less (UTC time) to schedule Friday : 19:15 - Body Attack
-    - cron: "30 18 * * 3"    # Runs 48 hours less (UTC time) to schedule Friday : 18:30 - Body Pump
-    - cron: "15 10 * * 4"    # Runs 48 hours less (UTC time) to schedule Saturday : 10:15 - Body Pump
+    - cron: "30 12 * * 6"    # Runs 48 hours less (UTC time) to schedule Monday : 12:30 - V-Power
+    - cron: "15 18 * * 6"    # Runs 48 hours less (UTC time) to schedule Monday : 18:15 - V-Burn
+    - cron: "30 17 * * 0"    # Runs 48 hours less (UTC time) to schedule Tuesday : 17:30 - V-Power
+    - cron: "15 18 * * 1"    # Runs 48 hours less (UTC time) to schedule Wednesday : 18:15 - V-Power
+    - cron: "15 19 * * 1"    # Runs 48 hours less (UTC time) to schedule Wednesday : 19:15 - V-Burn
+    - cron: "45 12 * * 2"    # Runs 48 hours less (UTC time) to schedule Thursday : 12:45 - V-Power
+    - cron: "30 17 * * 2"    # Runs 48 hours less (UTC time) to schedule Thursday : 17:30 - V-Power
 
 jobs:
   run-docker:
