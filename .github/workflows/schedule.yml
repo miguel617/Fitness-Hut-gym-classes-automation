@@ -6,7 +6,7 @@ on:
 
   # Schedule runs at specific times
   schedule:
-    - cron: "30 19 * * 3"    # Runs 48 hours less (UTC time) to schedule Friday : 19:30 - V-Burn
+    - cron: "0 10 * * 4"    # Runs 48 hours less (UTC time) to schedule Saturday : 10:00 - V-Power
 
 jobs:
   run-docker:
