@@ -65,9 +65,6 @@ def initial_exec(user, pwd, website, gui_option=False):
     insert_text('password', pwd, wait)
 
 
-    validate_login = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-testid="login-button"]')))
-    validate_login.click()
-
     #### to delete
 
     print("URL:", driver.current_url)
@@ -76,6 +73,8 @@ def initial_exec(user, pwd, website, gui_option=False):
     
     ####
 
+    validate_login = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-testid="login-button"]')))
+    validate_login.click()
 
     new_reservation = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-cy="booknew-button"]')))
     new_reservation.click()
