@@ -65,15 +65,16 @@ def initial_exec(user, pwd, website, gui_option=False):
     insert_text('password', pwd, wait)
 
 
-    try:
-        validate_login = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[data-cy="login-button"]')))
-        driver.execute_script("arguments[0].click();", validate_login)
-    except Exception:
-        print("TITLE:", driver.title)
-        print("URL:", driver.current_url)
-        for el in driver.find_elements(By.TAG_NAME, 'button'):
-            print("BUTTON:", el.get_attribute('outerHTML')[:200])
-        raise
+    validate_login = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-testid="login-button"]')))
+    validate_login.click()
+
+    #### to delete
+
+    print("URL:", driver.current_url)
+    for el in driver.find_elements(By.CSS_SELECTOR, '[data-testid]'):
+        print("TESTID:", el.get_attribute('data-testid'), "|", el.text[:40])
+    
+    ####
 
 
     new_reservation = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-cy="booknew-button"]')))
