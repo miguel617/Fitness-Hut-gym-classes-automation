@@ -15,15 +15,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 
 
-def insert_text(id, text, wait):
-    #email_textbox = driver.find_element(By.ID, id) 
-    textbox = wait.until(EC.presence_of_element_located((By.ID, id)))
-    textbox.send_keys(text)
-    
+def insert_text(testid, text, wait):
+    textbox = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, f'[data-testid="{testid}"]')))
     textbox.click()
-
-    #textbox.send_keys(text)
-
+    textbox.send_keys(text)
     return textbox
 
 
@@ -65,6 +60,14 @@ def initial_exec(user, pwd, website, gui_option=False):
     insert_text('password', pwd, wait)
 
 
+   validate_login = wait.until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-testid="login-button"]:not([disabled])'))
+    )
+    validate_login.click()
+
+    new_reservation = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-cy="booknew-button"]')))
+    new_reservation.click()
+
     #### to delete
 
     print("URL:", driver.current_url)
@@ -72,13 +75,6 @@ def initial_exec(user, pwd, website, gui_option=False):
         print("TESTID:", el.get_attribute('data-testid'), "|", el.text[:40])
     
     ####
-
-    validate_login = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-testid="login-button"]')))
-    validate_login.click()
-
-    new_reservation = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-cy="booknew-button"]')))
-    new_reservation.click()
-
 
     # First, check if we have the correct gym selected, otherwise we have to remove it and add the correct one
     
