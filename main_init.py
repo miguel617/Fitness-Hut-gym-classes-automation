@@ -19,6 +19,11 @@ def insert_text(testid, text, wait):
     textbox = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, f'[data-testid="{testid}"]')))
     textbox.click()
     textbox.send_keys(text)
+    driver.execute_script(
+        "arguments[0].dispatchEvent(new Event('input',{bubbles:true}));"
+        "arguments[0].dispatchEvent(new Event('change',{bubbles:true}));",
+        textbox,
+    )
     return textbox
 
 
@@ -64,6 +69,7 @@ def initial_exec(user, pwd, website, gui_option=False):
         EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-testid="login-button"]:not([disabled])'))
     )
     validate_login.click()
+    wait.until(lambda d: 'login' not in d.current_url)
 
     new_reservation = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-cy="booknew-button"]')))
     new_reservation.click()
